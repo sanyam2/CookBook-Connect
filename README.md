@@ -226,7 +226,7 @@ If you prefer to run services locally:
 
 ### GraphQL Playground
 - **Development**: `http://localhost:3000/graphql` - GraphQL Playground for testing queries
-- **Production**: `https://your-domain.railway.app/graphql` - Production GraphQL endpoint
+- **Production**: `https://cookbook-connect-production.up.railway.app/graphql` - Production GraphQL endpoint
 
 ### Key GraphQL Operations
 
