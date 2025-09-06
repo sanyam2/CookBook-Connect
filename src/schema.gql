@@ -1,0 +1,471 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  access_token: String!
+  user: User!
+}
+
+input AvailableIngredientsInput {
+  ingredients: [String!]!
+  limit: Int! = 20
+}
+
+type AverageRatingResponse {
+  """The average rating value"""
+  average: Float!
+
+  """The total number of ratings"""
+  count: Int!
+}
+
+type Comment {
+  content: String!
+  createdAt: DateTime!
+  id: ID!
+  updatedAt: DateTime!
+  user: User!
+}
+
+input CreateCommentInput {
+  content: String!
+  recipeId: String!
+}
+
+input CreateIngredientInput {
+  name: String!
+  notes: String
+  quantity: String!
+  recipeId: String!
+  unit: String
+}
+
+input CreateInstructionInput {
+  description: String!
+  imageUrl: String
+  recipeId: String!
+  stepNumber: Int!
+}
+
+input CreateRatingInput {
+  rating: Int!
+  recipeId: String!
+  review: String
+}
+
+input CreateRecipeInput {
+  cookTime: Float
+  description: String
+  difficulty: String
+  prepTime: Float
+  servings: Float
+  title: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Follow {
+  createdAt: DateTime!
+  follower: User!
+  following: User!
+  id: ID!
+}
+
+type FollowStatsResponse {
+  """Number of followers"""
+  followersCount: Int!
+
+  """Number of users being followed"""
+  followingCount: Int!
+}
+
+input FollowUserInput {
+  followingId: String!
+}
+
+type Ingredient {
+  id: ID!
+  name: String!
+  notes: String
+  quantity: String!
+  unit: String
+}
+
+type Instruction {
+  description: String!
+  id: ID!
+  imageUrl: String
+  stepNumber: Float!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input MarkAsReadInput {
+  notificationId: String!
+}
+
+type Mutation {
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  createIngredient(createIngredientInput: CreateIngredientInput!): Ingredient!
+  createInstruction(createInstructionInput: CreateInstructionInput!): Instruction!
+  createRating(createRatingInput: CreateRatingInput!): Rating!
+  createRecipe(createRecipeInput: CreateRecipeInput!): Recipe!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteNotification(notificationId: String!): Boolean!
+  followUser(followUserInput: FollowUserInput!): Follow!
+  login(input: LoginInput!): AuthResponse!
+  markAllNotificationsAsRead: Int!
+  markNotificationAsRead(input: MarkAsReadInput!): Boolean!
+  register(input: RegisterInput!): AuthResponse!
+  removeComment(id: ID!): Comment!
+  removeIngredient(id: ID!): Ingredient!
+  removeInstruction(id: ID!): Instruction!
+  removeRating(id: ID!): Rating!
+  removeRecipe(id: ID!): Recipe!
+  removeUser(id: ID!): User!
+  unfollowUser(followingId: ID!): Follow!
+  updateComment(id: ID!, updateCommentInput: UpdateCommentInput!): Comment!
+  updateIngredient(id: ID!, updateIngredientInput: UpdateIngredientInput!): Ingredient!
+  updateInstruction(id: ID!, updateInstructionInput: UpdateInstructionInput!): Instruction!
+  updateRating(id: ID!, updateRatingInput: UpdateRatingInput!): Rating!
+  updateRecipe(id: ID!, updateRecipeInput: UpdateRecipeInput!): Recipe!
+  updateUser(id: ID!, updateUserInput: UpdateUserInput!): User!
+}
+
+type Notification {
+  createdAt: DateTime!
+  fromUser: NotificationUser
+  fromUserId: ID
+  id: ID!
+  message: String!
+  read: Boolean!
+  readAt: DateTime
+  recipe: NotificationRecipe
+  recipeId: ID
+  type: String!
+}
+
+type NotificationRecipe {
+  id: ID!
+  title: String!
+}
+
+type NotificationUser {
+  avatar: String
+  id: ID!
+  username: String!
+}
+
+type Query {
+  averageRating(recipeId: ID!): AverageRatingResponse!
+  commentsByRecipe(recipeId: ID!, skip: Int, take: Int): [Comment!]!
+  followStats(userId: ID!): FollowStatsResponse!
+  followers(skip: Int, take: Int, userId: ID!): [Follow!]!
+  following(skip: Int, take: Int, userId: ID!): [Follow!]!
+  ingredient(id: ID!): Ingredient!
+  ingredientSuggestions(limit: Int! = 10, query: String!): [String!]!
+  ingredients(recipeId: String): [Ingredient!]!
+  ingredientsByRecipe(recipeId: ID!): [Ingredient!]!
+  instructionsByRecipe(recipeId: ID!): [Instruction!]!
+  isFollowing(followingId: ID!): Boolean!
+  me: User!
+  myComments(skip: Int, take: Int): [Comment!]!
+  myRatingForRecipe(recipeId: ID!): Rating
+  myRatings(skip: Int, take: Int): [Rating!]!
+  notifications(limit: Float! = 20, offset: Float! = 0): [Notification!]!
+  popularIngredients(limit: Int! = 20): [String!]!
+  ratingsByRecipe(recipeId: ID!, skip: Int, take: Int): [Rating!]!
+  recipe(id: ID!): Recipe!
+  recipeRecommendations(limit: Int! = 20): [Recipe!]!
+  recipeSuggestions(limit: Int! = 10, query: String!): [RecipeSuggestionResponse!]!
+  recipes(filter: RecipeFilterInput): [Recipe!]!
+  recipesByAvailableIngredients(availableIngredientsInput: AvailableIngredientsInput!): [RecipeByIngredientsResponse!]!
+  recipesByIngredients(ingredients: [String!]!, limit: Int! = 20): [Recipe!]!
+  recipesWithAverageRatings(limit: Int! = 10): [Recipe!]!
+  searchAnalytics(timeframe: String! = "7d"): SearchAnalyticsResponse!
+  searchIngredients(limit: Int! = 10, query: String!): [String!]!
+  searchRecipes(searchInput: SearchInput!): SearchResult!
+  searchUsers(query: String!, skip: Int, take: Int): [User!]!
+  unreadNotificationCount: Int!
+  user(id: ID!): User!
+  userByUsername(username: String!): User!
+  userFeed(limit: Int! = 20): [Recipe!]!
+  users(skip: Int, take: Int): [User!]!
+  usersWithMostFollowers(limit: Int! = 10): [User!]!
+  usersWithMostRecipes(limit: Int! = 10): [User!]!
+}
+
+type Rating {
+  createdAt: DateTime!
+  id: ID!
+  rating: Float!
+  review: String
+  updatedAt: DateTime!
+  user: User!
+}
+
+type Recipe {
+  author: User!
+  cookTime: Float
+  createdAt: DateTime!
+  description: String
+  difficulty: String
+  id: ID!
+  ingredients: [Ingredient!]
+  instructions: [Instruction!]
+  isPublic: Boolean!
+  prepTime: Float
+  servings: Float
+  title: String!
+  updatedAt: DateTime!
+}
+
+type RecipeAuthor {
+  avatar: String
+  id: ID!
+  username: String!
+}
+
+type RecipeByIngredientsResponse {
+  """Average rating"""
+  averageRating: Float
+
+  """Cooking time in minutes"""
+  cookingTime: Int
+
+  """Cuisine type"""
+  cuisine: String
+
+  """Recipe description"""
+  description: String
+
+  """Difficulty level"""
+  difficulty: String
+
+  """Recipe ID"""
+  id: ID!
+
+  """Number of matching ingredients"""
+  matchingIngredientsCount: Int
+
+  """Recipe title"""
+  title: String!
+}
+
+type RecipeComment {
+  content: String!
+  createdAt: DateTime!
+  id: ID!
+  user: RecipeAuthor!
+}
+
+input RecipeFilterInput {
+  authorId: String
+  difficulty: String
+  ingredient: String
+  maxCookTime: Float
+  maxPrepTime: Float
+  search: String
+  skip: Int
+  sortBy: String! = "createdAt"
+  sortOrder: String! = "desc"
+  take: Int
+}
+
+type RecipeSuggestionResponse {
+  """Average rating"""
+  averageRating: Float
+
+  """Cooking time in minutes"""
+  cookingTime: Int
+
+  """Cuisine type"""
+  cuisine: String
+
+  """Recipe description"""
+  description: String
+
+  """Difficulty level"""
+  difficulty: String
+
+  """Recipe ID"""
+  id: ID!
+
+  """Recipe title"""
+  title: String!
+}
+
+type RecipeUpdate {
+  averageRating: Float
+  commentCount: Int
+  id: ID!
+  latestComments: [RecipeComment!]
+  ratingCount: Int
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+type SearchAnalyticsResponse {
+  """Average rating across all recipes"""
+  averageRating: Float!
+
+  """Recipes grouped by cuisine"""
+  byCuisine: [String!]!
+
+  """Recipes grouped by difficulty"""
+  byDifficulty: [String!]!
+
+  """Total number of recipes"""
+  totalRecipes: Int!
+}
+
+input SearchInput {
+  cuisine: String
+  difficulty: String
+  ingredients: [String!]
+  maxCookTime: Int
+  maxPrepTime: Int
+  minRating: Int
+  query: String
+  skip: Int
+  sortBy: String! = "relevance"
+  sortOrder: String! = "desc"
+  take: Int
+}
+
+type SearchResult {
+  maxScore: Float
+  recipes: [Recipe!]!
+  took: Int!
+  total: Int!
+}
+
+type Subscription {
+  notificationSubscription(userId: String!): Notification!
+  notifications(userId: String!): SubscriptionNotification!
+  recipeFeed(userId: String!): SubscriptionRecipe!
+  recipeUpdates(recipeId: String!): RecipeUpdate!
+  userActivity(userId: String!): UserActivity!
+}
+
+type SubscriptionNotification {
+  createdAt: DateTime!
+  fromUser: SubscriptionNotificationFromUser
+  id: ID!
+  message: String!
+  recipe: SubscriptionNotificationRecipe
+  type: String!
+}
+
+type SubscriptionNotificationFromUser {
+  avatar: String
+  id: ID!
+  username: String!
+}
+
+type SubscriptionNotificationRecipe {
+  id: ID!
+  title: String!
+}
+
+type SubscriptionRecipe {
+  author: RecipeAuthor!
+  averageRating: Float
+  commentCount: Int
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  ratingCount: Int
+  title: String!
+}
+
+input UpdateCommentInput {
+  content: String
+  recipeId: String
+}
+
+input UpdateIngredientInput {
+  name: String
+  notes: String
+  quantity: String
+  recipeId: String
+  unit: String
+}
+
+input UpdateInstructionInput {
+  description: String
+  imageUrl: String
+  recipeId: String
+  stepNumber: Int
+}
+
+input UpdateRatingInput {
+  rating: Int
+  recipeId: String
+  review: String
+}
+
+input UpdateRecipeInput {
+  cookTime: Float
+  description: String
+  difficulty: String
+  prepTime: Float
+  servings: Float
+  title: String
+}
+
+input UpdateUserInput {
+  email: String
+  password: String
+  username: String
+}
+
+type User {
+  avatar: String
+  bio: String
+  createdAt: DateTime!
+  email: String!
+  firstName: String
+  followers: [Follow!]
+  following: [Follow!]
+  id: ID!
+  lastName: String
+  recipes: [Recipe!]
+  updatedAt: DateTime!
+  username: String!
+}
+
+type UserActivity {
+  recipe: UserActivityRecipe
+  timestamp: DateTime!
+  type: String!
+  user: UserActivityUser!
+}
+
+type UserActivityRecipe {
+  id: ID!
+  title: String!
+}
+
+type UserActivityUser {
+  avatar: String
+  id: ID!
+  username: String!
+}

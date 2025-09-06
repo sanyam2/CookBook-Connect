@@ -1,0 +1,155 @@
+// CookBook Connect - Prisma Schema
+// Recipe sharing platform with user management, ratings, and social features
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and profiles
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  recipes       Recipe[]
+  ratings       Rating[]
+  comments      Comment[]
+  followers     Follow[] @relation("UserFollowers")
+  following     Follow[] @relation("UserFollowing")
+  notifications Notification[] @relation("UserNotifications")
+  sentNotifications Notification[] @relation("UserSentNotifications")
+
+  @@map("users")
+}
+
+// Recipe model for storing recipe information
+model Recipe {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  prepTime    Int?     // in minutes
+  cookTime    Int?     // in minutes
+  servings    Int?
+  difficulty  String?  // easy, medium, hard
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  ingredients   Ingredient[]
+  instructions  Instruction[]
+  ratings       Rating[]
+  comments      Comment[]
+  notifications Notification[]
+
+  @@map("recipes")
+}
+
+// Ingredient model for recipe ingredients
+model Ingredient {
+  id       String @id @default(cuid())
+  name     String
+  quantity String
+  unit     String?
+  notes    String?
+
+  // Relations
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("ingredients")
+}
+
+// Instruction model for step-by-step cooking instructions
+model Instruction {
+  id          String @id @default(cuid())
+  stepNumber  Int
+  description String
+
+  // Relations
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("instructions")
+}
+
+// Rating model for user ratings (1-5 stars)
+model Rating {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5 stars
+  review    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+  @@map("ratings")
+}
+
+// Comment model for user comments on recipes
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+// Follow model for user following relationships
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  followerId String
+  follower   User   @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following  User   @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+// Notification model for user notifications
+model Notification {
+  id        String    @id @default(cuid())
+  type      String    // RECIPE_RATED, RECIPE_COMMENTED, USER_FOLLOWED, etc.
+  message   String
+  read      Boolean   @default(false)
+  readAt    DateTime?
+  metadata  Json?     // Additional data for the notification
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  recipientId String
+  recipient   User   @relation("UserNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  fromUserId  String?
+  fromUser    User?  @relation("UserSentNotifications", fields: [fromUserId], references: [id], onDelete: SetNull)
+  recipeId    String?
+  recipe      Recipe? @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
